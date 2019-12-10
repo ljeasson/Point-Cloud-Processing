@@ -1,0 +1,13 @@
+*.las
+*.exe
+.vscode
+__pycache__
+tiles/
+tiles_no_buffer/
+heightmap_tiles/
+heightmap_tiles_no_buffer/
+heightmap_tiles_ground/
+heightmap_tiles_ground_(Copy)/
+heightmap_tiles_ground_(Copy)_converted/
+heightmap_txt_tile/
+heightmap_txt_tile_ground/
