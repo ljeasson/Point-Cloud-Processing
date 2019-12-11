@@ -141,61 +141,15 @@ def find_2nd(string, substring):
    return string.find(substring, string.find(substring) + 1)
 
 def create_heightmap(point_cloud):
-    '''
-    # Extract information using LASHEADER 
-    header_info = get_lasheader_info(point_cloud)
-
-    # Get number of points and 
-    # min and max x and y values 
-    pc_num_points = count_points(header_info)
-    boundaries = get_boundaries(header_info)
-    print("Number of points:",pc_num_points)
-    print("Boundaries:",boundaries)
-
-    # Set height, width, Zmax, and Zmin based on boundaries
-    Xmin = boundaries[0]
-    Xmax = boundaries[1]
-    Ymin = boundaries[2]
-    Ymax = boundaries[3]
-    Zmin = boundaries[4]
-    Zmax = boundaries[5]
-    
-    H = Xmax - Xmin
-    W = Ymax - Ymin
-    r = 500
-    print("\nXmin:",Xmin,"\nXmax:",Xmax,"\nYmin:",Ymin,"\nYmax:",Ymax,"\nZmin:",Zmin,"\nZmax:",Zmax)
-    print("\nWidth:",W,"\nHeight:",H,)
-    print("\nr:",r)
-
-    image_W = int(W/r)
-    image_H = int(H/r)
-    print("\nImage_W:",image_W,"\nImage_H:",image_H,"\n")
-
-    # Break point cloud into tiles
-    if (not os.path.exists("./heightmap_tiles") and
-        not os.path.exists("./heightmap_tiles_no_buffer")):
-        print("RUNNING LASTILE")
-        print(point_cloud)
-        os.system("mkdir heightmap_tiles")
-        os.system("mkdir heightmap_tiles_no_buffer")
-        os.system("lastile -i " + point_cloud + " -tile_size 500 -buffer 50 -o heightmap_tiles/tile.las")
-        print("DONE\n")
-    '''
 
     # Get max and min height from tiles
     tile_height_min = 823.96
     tile_height_max = 2352.22
     if tile_height_min == 0 and tile_height_max == 0:
         tile_height_min, tile_height_max = get_min_and_max_Z("./heightmap_txt_tile_ground")
-    #print("Absolute Min and Max:\n",tile_height_min,"\n",tile_height_max)
-    #print("Normalized Min and Max:\n", normalize(tile_height_min, tile_height_min, tile_height_max), "\n", normalize(tile_height_max, tile_height_min, tile_height_max))
-
-    scaling_factor = tile_height_max - tile_height_min
-    #print("Scaling Factor:\n",scaling_factor)
-
-    #print("Rescaled Min and Max:\n",scale(tile_height_min, tile_height_min, scaling_factor),"\n",scale(tile_height_max, tile_height_min, scaling_factor))
-
     
+    scaling_factor = tile_height_max - tile_height_min
+        
     # Call las2dem on each .las tile
     las2dem_command = "las2dem -i "
     
@@ -235,7 +189,10 @@ def create_heightmap(point_cloud):
     print("\nRUNNING LAS2DEM")
     las2dem_command += "-merged -elevation -o UAV_LIDAR_GROUND_HEIGHTMAP_FINAL.tif"
     os.system(las2dem_command)
+    #os.system("las2dem -i " + fileName + ".las -opng -keep_class 2 -hillshade -step 1 -nbits 16 -o " + fileName + "_heightmap.png")
+    print("DONE\n")
 
     print("\nRUNNING GDAL_TRANSLATE")
     gdal_translate_command = "gdal_translate -of GTiff -ot Byte -scale 0 65535 0 255 UAV_LIDAR_GROUND_HEIGHTMAP_FINAL.tif UAV_LIDAR_GROUND_HEIGHTMAP_FINAL_RESCALED.tif"
     os.system(gdal_translate_command)
+    print("DONE\n")
