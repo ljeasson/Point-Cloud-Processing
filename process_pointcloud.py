@@ -5,7 +5,7 @@ import glob
 import sys, getopt
 
 from segment_pointcloud import segment_point_cloud
-from create_heightmap import create_heightmap, threshold
+from create_heightmap import create_heightmap
 
 def main(argv):
     #print('Number of arguments:', len(sys.argv), 'arguments.')
@@ -29,7 +29,11 @@ def main(argv):
         elif opt == "-header":
             header = True
 
-    print('Input point cloud: ', input_point_cloud)
+    if not input_point_cloud.endswith(".las"):
+        print('Incorrect file format\nUse .las or .laz point clouds')
+        sys.exit()
+    
+    print('Input point cloud: ', input_point_cloud, '\n')
 
     # Convert LAZ to LAS
     if input_point_cloud.endswith(".laz"):
@@ -44,7 +48,7 @@ def main(argv):
     fileName = input_point_cloud[:input_point_cloud.index(".")]
  
     # Segment Point Clouds into vegetation and ground
-    #segment_point_cloud(fileName)
+    segment_point_cloud(input_point_cloud, fileName)
     
     # Get list of point clouds to process
     point_clouds = []
@@ -53,11 +57,12 @@ def main(argv):
             point_clouds.append(file)
  
     base_point_cloud = point_clouds[0]
-    veg_point_cloud = point_clouds[1]
-    ground_point_cloud = point_clouds[2]
+    ground_point_cloud = point_clouds[1]
+    veg_point_cloud = point_clouds[2]
     
     # Create heightmap from Ground point cloud
-    create_heightmap(ground_point_cloud)
+    fileName_ground = input_point_cloud[:input_point_cloud.index(".")]
+    #create_heightmap(ground_point_cloud, fileName_ground)
 
 
 if __name__ == "__main__":
