@@ -1,18 +1,5 @@
 import os
 import glob
-import multiprocessing
-
-'''
-def process_tile(tileName):
-    # Run LASNOISE to remove outlying points
-    os.system("lasnoise -i " + tileName + ".las -remove_noise") # -ignore_class 2
-    # Run LASGROUND to classify ground points
-    os.system("lasground -i " + tileName + ".las")
-    # Run LASHEIGHT to assign RGB values based on elevation 
-    os.system("lasheight -i " + tileName +".las")
-    # Run LASCLASSIFY to classify buildings and buildings and vegetation
-    os.system("lasclassify -i " + tileName + ".las")
-'''
 
 def segment_point_cloud(pointCloud, fileName):
     if not os.path.exists("USCAYF20180722f1a1_180722_181152_1_dem_filter_reproject.txt"): 
@@ -59,55 +46,4 @@ def segment_point_cloud(pointCloud, fileName):
         print("DONE\n")
 
     
-    '''
-    # Run LASTILE if not already pre-tiled
-    if not os.path.exists("./tiles"): 
-        print("RUNNING LASTILE")
-        os.system("mkdir tiles")
-        
-        os.system("lastile -i " + fileName + ".las -tile_size 500 -buffer 50 -o ./tiles/tile.las")
-        print("DONE\n")
-
-    if not os.path.exists("./tiles_no_buffer"):
-        os.system("mkdir tiles_no_buffer")
-        #p = []
-        for tile in os.listdir("./tiles"):
-            print("======================================")
-            print("Processing",tile)
-
-            # Get file name without ".las"
-            tileName = "./tiles/" + tile[:tile.index(".")]
-
-            # Process tile
-            process_tile(tileName)
-            #p1 = multiprocessing.Process(target=process_tile, args=(tileName, )) 
-            #p.append(p1)
-            
-        # Multiprocessing on tiles
-        for i in p: i.start()
-        for i in p: i.join()
-
-        # Run LASTILE to remove buffer
-        print("REMOVING BUFFER")
-        os.system("lastile -i tiles/tile_*.las -remove_buffer -odir tiles_no_buffer -olas")
-        print("DONE\n")
-
-    print("MERGING TILES")
-    os.system("lasmerge -i ./tiles_no_buffer/*.las -o " + fileName + "_merged.las")
-    print("DONE\n")
-
-    #Run LAS2LAS with Ground (class 2) filter
-    print("RUNNING LAS2LAS, Ground")
-    os.system("las2las -i " + fileName + "_merged.las -drop_class 4 -o " + fileName + "_ground.las")
-    print("DONE\n")
-    #Run LAS2LAS with Vegetation (class 4) filter
-    print("RUNNING LAS2LAS, Vegetation")
-    os.system("las2las -i " + fileName + "_merged.las -drop_class 2 -o " + fileName + "_vegetation.las")
-    print("DONE\n")
-
-
-    # Run LASSPLIT to split point clouds by classification
-    print("RUNNING LASSPLIT")
-    os.system("lassplit -i ./tiles_no_buffer/*.las -merged -o " + fileName + "_merged.las -by_classification")
-    print("DONE\n")
-    '''
+    
