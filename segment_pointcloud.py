@@ -44,6 +44,3 @@ def segment_point_cloud(pointCloud, fileName):
         print("RUNNING LAS2TXT FOR GROUND")
         os.system("las2txt -i " + str(fileName) + "_ground_no_noise_thinned.las -o " + str(fileName) + "_ground_no_noise_thinned.txt -parse xyzic -sep comma")
         print("DONE\n")
-
-    
-    
