@@ -29,9 +29,9 @@ def main(argv):
         elif opt == "-header":
             header = True
 
-    if not input_point_cloud.endswith(".las"):
-        print('Incorrect file format\nUse .las or .laz point clouds')
-        sys.exit()
+    #if not input_point_cloud.endswith(".las"):
+    #    print('Incorrect file format\nUse .las or .laz point clouds')
+    #    sys.exit()
     
     print('Input point cloud: ', input_point_cloud, '\n')
 
@@ -50,6 +50,7 @@ def main(argv):
     # Segment Point Clouds into vegetation and ground
     segment_point_cloud(input_point_cloud, fileName)
     
+    '''
     # Get list of point clouds to process
     point_clouds = []
     for file in os.listdir(os.getcwd()):
@@ -63,7 +64,8 @@ def main(argv):
     # Create heightmap from Ground point cloud
     fileName_ground = input_point_cloud[:input_point_cloud.index(".")]
     #create_heightmap(ground_point_cloud, fileName_ground)
-
+    '''
+    
 
 if __name__ == "__main__":
    main(sys.argv[1:])
