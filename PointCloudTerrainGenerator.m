@@ -11,14 +11,6 @@
 % a=importdata('C:\Users\tavakkol\Documents\Unreal Projects\MyPCL_Apartment\Content\PointCloud\Mine1Genova_Cloud.txt');
 
 %a= importdata('C:\Users\Lee\Desktop\Point_Cloud_Processing\USCAYF20180722f1a1_180722_181152_1_dem_filter_reproject_ground.txt');
-%pth= 'D:\Point Clouds\_tahoe_tiles_denoised_ground_norm_classify\merged\';
-%liste = dir(strcat(pth, '*.txt'));
-%files = {liste.name};
-%for k = 1:numel(files)
-%  file{k} = strcat(pth,files{k});
-%  data{k} = importdata(file{k},' ',6);  
-%end
-
 close all;
 
 % Set precision levels

@@ -6,49 +6,61 @@ import sys, getopt
 
 from segment_pointcloud import segment_point_cloud
 from create_heightmap import create_heightmap
+from merge_tiles import merge_tiles
 
 def main(argv):
     #print('Number of arguments:', len(sys.argv), 'arguments.')
     #print('Argument List:', str(sys.argv))
     
-    input_point_cloud = ''
+    directory = ''
     header = False
 
     try:
         opts, args = getopt.getopt(argv,"hi:",["ifile="])
     except getopt.GetoptError:
-        print('USAGE: process_pointcloud.py -i <inputfile>')
+        print('USAGE: process_pointcloud.py -i <input file or directory>')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h' or opt == '--help':
-            print('USAGE: process_pointcloud.py -i <inputfile>')
+            print('USAGE: process_pointcloud.py -i <input file or directory>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
-            input_point_cloud = arg
+            directory = arg
         elif opt == "-header":
             header = True
 
-    #if not input_point_cloud.endswith(".las"):
-    #    print('Incorrect file format\nUse .las or .laz point clouds')
-    #    sys.exit()
+    # If input ends with .laz
+    if directory.endswith(".laz"):
+        print('Incorrect file format\nUse .las or .laz point clouds')
+        sys.exit()
     
-    print('Input point cloud: ', input_point_cloud, '\n')
+    print('Input: ', directory, '\n')
 
-    # Convert LAZ to LAS
-    if input_point_cloud.endswith(".laz"):
-        print("Converting",input_point_cloud,"to LAS")
-        os.system("laszip -i " + str(input_point_cloud))
-        print("DONE\n")
+    # IF INPUT IS A POINT CLOUD
+    if directory.endswith(".las"):
+        # Get point cloud file name without ".las"
+        directory_no_ext = directory[ : directory.index(".")]
 
-    # Get header info if enabled
-    if header: os.system("lasinfo -i " + str(input_point_cloud) + " -o header_info.txt")
+        # Segment Point Cloud into vegetation and ground
+        segment_point_cloud(directory, directory_no_ext)
     
-    # Get point cloud file name without ".las"
-    fileName = input_point_cloud[:input_point_cloud.index(".")]
- 
-    # Segment Point Clouds into vegetation and ground
-    segment_point_cloud(input_point_cloud, fileName)
+    # IF INPUT IS A DIRECTORY
+    else:
+        merged_directory = ""
+
+        # Merge directory of tiles
+        merge_tiles(directory, 0.5)
+
+        for dirpath,_,filenames in os.walk(directory+"\merged"):
+            for f in filenames:
+                merged_directory = os.path.abspath(os.path.join(dirpath, f))
+        
+        merged_directory_no_ext = merged_directory[: merged_directory.index(".")]
+        print(merged_directory_no_ext)
+
+        # Segment Point Clouds into vegetation and ground
+        segment_point_cloud(merged_directory, merged_directory_no_ext)
     
     '''
     # Get list of point clouds to process
@@ -66,6 +78,11 @@ def main(argv):
     #create_heightmap(ground_point_cloud, fileName_ground)
     '''
     
+    # Open UE4 Editor with PCM Pipeline
+    print("OPENING UE4 EDITOR WITH PCM PIPELINE")
+    #os.system("UE4Editor 'D:\Users\Lee\Unreal Projects\PCM_PIpeline_v2\PCM_PIpeline_v2.uproject'")
+    print("DONE\n")
+
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    main(sys.argv[1:])
